@@ -62,10 +62,6 @@ src/
 - Users authenticate via Google OAuth2.
 - Only logged-in users can access and manage the books.
 
-## 📸 Screenshots
-
-*(Add screenshots here if available)*
-
 ## 👤 Author
 
 **Minh Tuấn**  
