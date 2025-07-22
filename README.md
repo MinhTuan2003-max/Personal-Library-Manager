@@ -27,17 +27,19 @@ A full-stack personal library management system that allows users to manage thei
 
 ## 📁 Project Structure
 
+```plaintext
 src/
-├── main/
-│ ├── java/com/example/library/
-│ │ ├── controller/ # Web and REST controllers
-│ │ ├── model/ # Book entity
-│ │ ├── repository/ # MongoDB repositories
-│ │ ├── security/ # OAuth2 configuration
-│ │ └── service/ # Business logic
-│ └── resources/
-│ ├── templates/ # Thymeleaf templates
-│ └── static/ # CSS, JS, Images
+└── main/
+    ├── java/com/example/library/
+    │   ├── controller/     # Web and REST controllers
+    │   ├── model/          # Book entity
+    │   ├── repository/     # MongoDB repositories
+    │   ├── security/       # OAuth2 configuration
+    │   └── service/        # Business logic
+    └── resources/
+        ├── templates/      # Thymeleaf templates
+        └── static/         # CSS, JS, Images
+```
 
 
 ## 🧪 REST API Endpoints
