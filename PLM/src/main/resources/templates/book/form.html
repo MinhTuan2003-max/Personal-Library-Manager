@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+    <head>
+        <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE"
+               th:text="${book.id != null ? #{page.edit.book.title} : #{page.add.book.title}}">Thêm Sách Mới</title>
+    </head>
+
+    <div layout:fragment="content">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{nav.home}">Trang chủ</a></li>
+                <li class="breadcrumb-item active"
+                    th:text="${book.id != null ? #{nav.edit.book} : #{nav.add.book}}">Thêm sách</li>
+            </ol>
+        </nav>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+                <div class="card border-0 shadow-lg">
+                    <!-- Card Header -->
+                    <div class="card-header bg-gradient-primary text-white border-0 py-4">
+                        <div class="text-center">
+                            <i class="fas fa-book-medical fa-3x mb-3"></i>
+                            <h3 class="mb-0 fw-bold"
+                                th:text="${book.id != null ? #{page.edit.book.title} : #{page.add.book.title}}">
+                                Thêm Sách Mới
+                            </h3>
+                            <p class="mb-0 opacity-75"
+                               th:text="${book.id != null ? #{page.edit.book.subtitle} : #{page.add.book.subtitle}}">
+                                Điền thông tin chi tiết về cuốn sách của bạn
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body p-4">
+                        <form method="post"
+                              th:action="${book.id != null ? '/books/edit/' + book.id : '/books/add'}"
+                              enctype="multipart/form-data"
+                              th:object="${book}"
+                              class="needs-validation"
+                              novalidate>
+
+                            <!-- Cover Image Upload -->
+                            <div class="text-center mb-4">
+                                <div class="position-relative d-inline-block">
+                                    <div class="cover-preview-container">
+                                        <img id="coverPreview"
+                                             th:src="${book.coverImageUrl != null ? book.coverImageUrl : '/images/book-placeholder.png'}"
+                                             class="img-thumbnail cover-preview"
+                                             alt="Book Cover">
+                                        <div class="cover-overlay">
+                                            <i class="fas fa-camera fa-2x"></i>
+                                            <div class="small mt-2" th:text="#{form.click.to.change}">Click để thay đổi</div>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="coverImage" name="coverImage"
+                                           class="d-none" accept="image/*" onchange="previewImage(this)">
+                                    <label for="coverImage" class="btn btn-primary btn-sm position-absolute bottom-0 end-0">
+                                        <i class="fas fa-camera"></i>
+                                    </label>
+                                </div>
+                                <div class="form-text mt-2" th:text="#{form.image.help}">
+                                    Chấp nhận: JPG, PNG, GIF. Tối đa: 10MB
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Title -->
+                                <div class="col-md-8 mb-3">
+                                    <label for="title" class="form-label fw-bold required">
+                                        <i class="fas fa-heading text-primary me-1"></i>
+                                        <span th:text="#{form.title}">Tiêu đề sách</span>
+                                    </label>
+                                    <input type="text"
+                                           id="title"
+                                           name="title"
+                                           class="form-control form-control-lg"
+                                           th:field="*{title}"
+                                           th:placeholder="#{form.title.placeholder}"
+                                           required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+                                        Validation error
+                                    </div>
+                                    <div class="invalid-feedback" th:unless="${#fields.hasErrors('title')}">
+                                        <span th:text="#{validation.title.required}">Vui lòng nhập tiêu đề sách</span>
+                                    </div>
+                                </div>
+
+                                <!-- Genre -->
+                                <div class="col-md-4 mb-3">
+                                    <label for="genre" class="form-label fw-bold required">
+                                        <i class="fas fa-tags text-primary me-1"></i>
+                                        <span th:text="#{form.genre}">Thể loại</span>
+                                    </label>
+                                    <select id="genre"
+                                            name="genre"
+                                            class="form-select form-select-lg"
+                                            th:field="*{genre}"
+                                            required>
+                                        <option value="" th:text="#{form.select.genre}">Chọn thể loại</option>
+                                        <option th:each="g : ${genres}"
+                                                th:value="${g}"
+                                                th:text="${g.displayName}">
+                                        </option>
+                                    </select>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}">
+                                        Validation error
+                                    </div>
+                                    <div class="invalid-feedback" th:unless="${#fields.hasErrors('genre')}">
+                                        <span th:text="#{validation.genre.required}">Vui lòng chọn thể loại</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Author -->
+                                <div class="col-md-8 mb-3">
+                                    <label for="author" class="form-label fw-bold required">
+                                        <i class="fas fa-user-edit text-primary me-1"></i>
+                                        <span th:text="#{form.author}">Tác giả</span>
+                                    </label>
+                                    <input type="text"
+                                           id="author"
+                                           name="author"
+                                           class="form-control form-control-lg"
+                                           th:field="*{author}"
+                                           th:placeholder="#{form.author.placeholder}"
+                                           required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('author')}" th:errors="*{author}">
+                                        Validation error
+                                    </div>
+                                    <div class="invalid-feedback" th:unless="${#fields.hasErrors('author')}">
+                                        <span th:text="#{validation.author.required}">Vui lòng nhập tên tác giả</span>
+                                    </div>
+                                </div>
+
+                                <!-- Price -->
+                                <div class="col-md-4 mb-3" th:if="${book.id == null}">
+                                    <label for="price" class="form-label fw-bold required">
+                                        <i class="fas fa-money-bill-wave text-primary me-1"></i>
+                                        <span th:text="#{form.price}">Giá tiền</span>
+                                    </label>
+                                    <div class="input-group input-group-lg">
+                                        <input type="number"
+                                               id="price"
+                                               name="price"
+                                               class="form-control"
+                                               th:field="*{price}"
+                                               th:placeholder="#{form.price.placeholder}"
+                                               min="1000"
+                                               step="1000"
+                                               required>
+                                        <span class="input-group-text">VND</span>
+                                    </div>
+                                    <div class="form-text" th:text="#{form.price.help}">Giá tối thiểu: 1,000 VND</div>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">
+                                        Validation error
+                                    </div>
+                                    <div class="invalid-feedback" th:unless="${#fields.hasErrors('price')}">
+                                        <span th:text="#{validation.price.required}">Vui lòng nhập giá sách</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-4">
+                                <label for="description" class="form-label fw-bold">
+                                    <i class="fas fa-align-left text-primary me-1"></i>
+                                    <span th:text="#{form.description}">Mô tả</span>
+                                </label>
+                                <textarea id="description"
+                                          name="description"
+                                          class="form-control"
+                                          rows="4"
+                                          th:field="*{description}"
+                                          th:placeholder="#{form.description.placeholder}"
+                                          maxlength="500"></textarea>
+                                <div class="form-text d-flex justify-content-between">
+                                    <span th:text="#{form.description.help}">Mô tả ngắn gọn về nội dung sách (tùy chọn)</span>
+                                    <span class="text-muted">
+                                    <span id="charCount">0</span>/500
+                                </span>
+                                </div>
+                            </div>
+
+                            <!-- Budget Warning (for new books) -->
+                            <div class="alert alert-info d-flex align-items-center" th:if="${book.id == null and user}">
+                                <i class="fas fa-info-circle me-3 fa-2x"></i>
+                                <div>
+                                    <h6 class="alert-heading mb-1" th:text="#{alert.budget.title}">Thông tin ngân sách</h6>
+                                    <p class="mb-0">
+                                        <span th:text="#{alert.budget.current}">Ngân sách hiện tại:</span>
+                                        <strong class="text-success" th:text="${#numbers.formatDecimal(user.budget, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</strong>
+                                    </p>
+                                    <small class="text-muted" th:text="#{alert.budget.note}">
+                                        Số tiền sẽ được trừ từ ngân sách khi thêm sách mới.
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-between align-items-center pt-3">
+                                <a th:href="@{/}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    <span th:text="#{button.back}">Quay lại</span>
+                                </a>
+
+                                <div class="d-flex gap-2">
+                                    <button type="reset" class="btn btn-outline-warning btn-lg">
+                                        <i class="fas fa-undo me-2"></i>
+                                        <span th:text="#{button.reset}">Đặt lại</span>
+                                    </button>
+                                    <button type="submit" class="btn btn-primary btn-lg px-5" id="submitBtn">
+                                        <i class="fas fa-save me-2"></i>
+                                        <span th:text="${book.id != null ? #{button.update} : #{button.save}}">Lưu sách</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="css">
+        <style>
+            .bg-gradient-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+
+            .required::after {
+                content: " *";
+                color: #dc3545;
+            }
+
+            .cover-preview-container {
+                position: relative;
+                width: 200px;
+                height: 280px;
+                margin: 0 auto;
+                border-radius: 8px;
+                overflow: hidden;
+                cursor: pointer;
+            }
+
+            .cover-preview {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+
+            .cover-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.7);
+                color: white;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .cover-preview-container:hover .cover-overlay {
+                opacity: 1;
+            }
+
+            .cover-preview-container:hover .cover-preview {
+                transform: scale(1.05);
+            }
+
+            .form-control:focus, .form-select:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border: none;
+            }
+
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+                transform: translateY(-2px);
+            }
+        </style>
+    </th:block>
+
+    <th:block layout:fragment="javascript">
+        <script>
+            // Image preview function
+            function previewImage(input) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('coverPreview').src = e.target.result;
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            // Character counter for description
+            document.addEventListener('DOMContentLoaded', function() {
+                const descriptionTextarea = document.getElementById('description');
+                const charCount = document.getElementById('charCount');
+
+                function updateCharCount() {
+                    const count = descriptionTextarea.value.length;
+                    charCount.textContent = count;
+
+                    if (count > 450) {
+                        charCount.className = 'text-warning';
+                    } else if (count > 480) {
+                        charCount.className = 'text-danger';
+                    } else {
+                        charCount.className = 'text-muted';
+                    }
+                }
+
+                descriptionTextarea.addEventListener('input', updateCharCount);
+                updateCharCount(); // Initial count
+
+                // Form validation
+                const form = document.querySelector('.needs-validation');
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    } else {
+                        // Show loading state
+                        const submitBtn = document.getElementById('submitBtn');
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
+                        submitBtn.disabled = true;
+                    }
+
+                    form.classList.add('was-validated');
+                });
+
+                // Real-time validation
+                const requiredInputs = form.querySelectorAll('input[required], select[required]');
+                requiredInputs.forEach(input => {
+                    input.addEventListener('blur', function() {
+                        if (this.checkValidity()) {
+                            this.classList.remove('is-invalid');
+                            this.classList.add('is-valid');
+                        } else {
+                            this.classList.remove('is-valid');
+                            this.classList.add('is-invalid');
+                        }
+                    });
+                });
+            });
+        </script>
+    </th:block>
+</html>

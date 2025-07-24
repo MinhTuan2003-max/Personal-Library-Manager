@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+    <head>
+        <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE" th:text="#{error.404.title}">Không Tìm Thấy Trang</title>
+    </head>
+
+    <div layout:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="error-container py-5">
+                    <!-- Error Illustration -->
+                    <div class="error-illustration mb-4">
+                        <i class="fas fa-book-dead display-1 text-muted opacity-25"></i>
+                    </div>
+
+                    <!-- Error Code -->
+                    <h1 class="display-1 fw-bold text-primary mb-0">404</h1>
+
+                    <!-- Error Message -->
+                    <h2 class="h4 mb-3" th:text="#{error.404.heading}">Oops! Không tìm thấy trang</h2>
+                    <p class="text-muted mb-4" th:text="#{error.404.message}">
+                        Trang bạn đang tìm kiếm có thể đã bị xóa, đổi tên hoặc tạm thời không khả dụng.
+                    </p>
+
+                    <!-- Suggestions -->
+                    <div class="suggestions mb-4">
+                        <h5 class="fw-bold mb-3" th:text="#{error.404.suggestions}">Bạn có thể thử:</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                <span th:text="#{error.404.check.url}">Kiểm tra lại đường dẫn URL</span>
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                <span th:text="#{error.404.return.home}">Quay về trang chủ</span>
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                <span th:text="#{error.404.use.search}">Sử dụng chức năng tìm kiếm</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a th:href="@{/}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-home me-2"></i>
+                            <span th:text="#{button.go.home}">Về Trang Chủ</span>
+                        </a>
+                        <button onclick="history.back()" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            <span th:text="#{button.go.back}">Quay Lại</span>
+                        </button>
+                        <a th:href="@{/books/add}" class="btn btn-success btn-lg">
+                            <i class="fas fa-plus me-2"></i>
+                            <span th:text="#{button.add.book}">Thêm Sách</span>
+                        </a>
+                    </div>
+
+                    <!-- Search Form -->
+                    <div class="mt-5">
+                        <h6 class="fw-bold mb-3" th:text="#{error.404.search.books}">Tìm kiếm sách:</h6>
+                        <form method="get" th:action="@{/}" class="d-flex justify-content-center">
+                            <div class="input-group" style="max-width: 400px;">
+                                <input type="text" name="search" class="form-control form-control-lg"
+                                       th:placeholder="#{search.placeholder}">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="css">
+        <style>
+            .error-container {
+                min-height: 60vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .error-illustration {
+                animation: float 3s ease-in-out infinite;
+            }
+
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-20px); }
+            }
+
+            .suggestions ul li {
+                text-align: left;
+                display: inline-block;
+            }
+        </style>
+    </th:block>
+</html>

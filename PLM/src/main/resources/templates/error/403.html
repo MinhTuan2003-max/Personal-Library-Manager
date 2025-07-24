@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+    <head>
+        <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE" th:text="#{error.500.title}">Lỗi Máy Chủ</title>
+    </head>
+
+    <div layout:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="error-container py-5">
+                    <!-- Error Illustration -->
+                    <div class="error-illustration mb-4">
+                        <i class="fas fa-server display-1 text-danger opacity-25"></i>
+                    </div>
+
+                    <!-- Error Code -->
+                    <h1 class="display-1 fw-bold text-danger mb-0">500</h1>
+
+                    <!-- Error Message -->
+                    <h2 class="h4 mb-3" th:text="#{error.500.heading}">Oops! Có lỗi xảy ra</h2>
+                    <p class="text-muted mb-4" th:text="#{error.500.message}">
+                        Máy chủ đang gặp sự cố kỹ thuật. Chúng tôi đang khắc phục vấn đề này.
+                    </p>
+
+                    <!-- Error Details (if available) -->
+                    <div class="alert alert-danger text-start mb-4" th:if="${error}">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span th:text="#{error.details}">Chi tiết lỗi:</span>
+                        </h6>
+                        <p class="mb-0 font-monospace small" th:text="${error}">Error details</p>
+                    </div>
+
+                    <!-- What to do -->
+                    <div class="suggestions mb-4">
+                        <h5 class="fw-bold mb-3" th:text="#{error.500.what.to.do}">Bạn có thể:</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-refresh text-info me-2"></i>
+                                <span th:text="#{error.500.refresh}">Tải lại trang</span>
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-clock text-warning me-2"></i>
+                                <span th:text="#{error.500.wait}">Thử lại sau vài phút</span>
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-home text-success me-2"></i>
+                                <span th:text="#{error.500.go.home}">Quay về trang chủ</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <button onclick="location.reload()" class="btn btn-info btn-lg">
+                            <i class="fas fa-refresh me-2"></i>
+                            <span th:text="#{button.reload}">Tải Lại</span>
+                        </button>
+                        <a th:href="@{/}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-home me-2"></i>
+                            <span th:text="#{button.go.home}">Về Trang Chủ</span>
+                        </a>
+                        <button onclick="history.back()" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            <span th:text="#{button.go.back}">Quay Lại</span>
+                        </button>
+                    </div>
+
+                    <!-- Contact Support -->
+                    <div class="mt-5 p-4 bg-light rounded">
+                        <h6 class="fw-bold mb-2">
+                            <i class="fas fa-life-ring me-2"></i>
+                            <span th:text="#{error.500.need.help}">Cần trợ giúp?</span>
+                        </h6>
+                        <p class="text-muted mb-3" th:text="#{error.500.contact.message}">
+                            Nếu vấn đề vẫn tiếp tục, vui lòng liên hệ với chúng tôi.
+                        </p>
+                        <a href="mailto:support@bookshelf.com" class="btn btn-outline-primary">
+                            <i class="fas fa-envelope me-2"></i>
+                            <span th:text="#{button.contact.support}">Liên Hệ Hỗ Trợ</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="css">
+        <style>
+            .error-container {
+                min-height: 60vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .error-illustration {
+                animation: shake 2s ease-in-out infinite;
+            }
+
+            @keyframes shake {
+                0%, 100% { transform: translateX(0px); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+
+            .suggestions ul li {
+                text-align: left;
+                display: inline-block;
+            }
+        </style>
+    </th:block>
+</html>

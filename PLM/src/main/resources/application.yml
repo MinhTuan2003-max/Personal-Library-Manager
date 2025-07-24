@@ -1,0 +1,179 @@
+spring:
+  application:
+    name: personal-library-management
+
+  # Database Configuration
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/plm
+      auto-index-creation: true
+
+  # Security & OAuth2 Configuration
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:your-google-client-id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:your-google-client-secret}
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+            client-name: Google
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v2/userinfo
+            user-name-attribute: email
+            jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+
+  # File Upload Configuration
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+      location: ${java.io.tmpdir}
+      file-size-threshold: 0
+
+  # Thymeleaf Configuration
+  thymeleaf:
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    prefix: classpath:/templates/
+    suffix: .html
+    check-template: true
+    check-template-location: true
+    enable-spring-el-compiler: true
+
+  # Web Configuration
+  web:
+    resources:
+      static-locations: classpath:/static/,file:uploads/
+      cache:
+        period: 31536000 # 1 year for static resources
+        cachecontrol:
+          max-age: 31536000
+          cache-public: true
+
+  # Message Configuration
+  messages:
+    basename: messages/messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
+    always-use-message-format: false
+    use-code-as-default-message: false
+
+  # Jackson Configuration
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      indent-output: true
+    deserialization:
+      fail-on-unknown-properties: false
+    default-property-inclusion: NON_NULL
+    time-zone: Asia/Ho_Chi_Minh
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+  error:
+    whitelabel:
+      enabled: false
+    include-message: always
+    include-binding-errors: always
+
+# Logging Configuration
+logging:
+  level:
+    com.luv2code.springboot.demo.plm: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: INFO
+    org.springframework.data.mongodb: DEBUG
+    org.mongodb.driver: WARN
+    org.springframework.security.oauth2: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/bookmanagement.log
+    max-size: 100MB
+    max-history: 30
+
+# Management & Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env,beans,configprops
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when_authorized
+      show-components: always
+  info:
+    env:
+      enabled: true
+    java:
+      enabled: true
+    os:
+      enabled: true
+
+# Custom Application Properties
+app:
+  name: BookShelf
+  version: 1.0.0
+  description: Personal Book Management System
+
+  # File Upload Settings
+  upload:
+    dir: uploads
+    max-file-size: 10485760 # 10MB in bytes
+    allowed-types:
+      - image/jpeg
+      - image/jpg
+      - image/png
+      - image/gif
+    covers-dir: covers
+
+  # Pagination Settings
+  pagination:
+    default-page-size: 12
+    max-page-size: 100
+
+  # Budget Settings
+  budget:
+    min-amount: 1000
+    currency: VND
+
+  # Security Settings
+  security:
+    session-timeout: 3600 # 1 hour in seconds
+    remember-me-timeout: 604800 # 1 week in seconds
+
+  # Cache Settings
+  cache:
+    ttl: 3600 # 1 hour
+    max-entries: 1000
+
+# Spring Boot Admin (if needed)
+spring.boot.admin.client:
+  enabled: false
+  url: http://localhost:8081
+  instance:
+    management-base-url: http://localhost:8080
+    service-base-url: http://localhost:8080

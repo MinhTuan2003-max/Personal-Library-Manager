@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+    <head>
+        <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE" th:text="${book.title}">Chi Tiết Sách</title>
+    </head>
+
+    <div layout:fragment="content">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{nav.home}">Trang chủ</a></li>
+                <li class="breadcrumb-item active" th:text="#{nav.book.detail}">Chi tiết sách</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <!-- Book Cover and Basic Info -->
+            <div class="col-lg-4 mb-4">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-0">
+                        <!-- Cover Image -->
+                        <div class="position-relative">
+                            <img th:if="${book.coverImageUrl}"
+                                 th:src="${book.coverImageUrl}"
+                                 class="card-img-top book-detail-cover"
+                                 th:alt="${book.title}">
+                            <div th:unless="${book.coverImageUrl}"
+                                 class="card-img-top d-flex align-items-center justify-content-center bg-light book-detail-cover">
+                                <i class="fas fa-book fa-5x text-muted"></i>
+                            </div>
+
+                            <!-- Genre Badge -->
+                            <div class="position-absolute top-0 start-0 m-3">
+                            <span class="badge bg-primary fs-6 shadow">
+                                <i class="fas fa-bookmark me-1"></i>
+                                <span th:text="${book.genre.displayName}">Genre</span>
+                            </span>
+                            </div>
+                        </div>
+
+                        <!-- Price Section -->
+                        <div class="p-4 bg-gradient-primary text-white text-center">
+                            <h4 class="mb-0 fw-bold">
+                                <i class="fas fa-tag me-2"></i>
+                                <span th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
+                            </h4>
+                            <small class="opacity-75" th:text="#{detail.purchase.price}">Giá mua</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card border-0 shadow-sm mt-4">
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold mb-3">
+                            <i class="fas fa-cog me-2"></i>
+                            <span th:text="#{detail.actions}">Thao tác</span>
+                        </h6>
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-warning">
+                                <i class="fas fa-edit me-2"></i>
+                                <span th:text="#{button.edit}">Chỉnh sửa</span>
+                            </a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="fas fa-trash me-2"></i>
+                                <span th:text="#{button.delete}">Xóa sách</span>
+                            </button>
+                            <a th:href="@{/}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                <span th:text="#{button.back.to.library}">Về thư viện</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book Details -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg h-100">
+                    <div class="card-body">
+                        <!-- Title and Author -->
+                        <div class="mb-4">
+                            <h1 class="display-5 fw-bold text-primary mb-2" th:text="${book.title}">Book Title</h1>
+                            <h5 class="text-muted mb-3">
+                                <i class="fas fa-user me-2"></i>
+                                <span th:text="#{detail.by}">bởi</span>
+                                <span class="fw-bold" th:text="${book.author}">Author Name</span>
+                            </h5>
+
+                            <!-- Rating Stars -->
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rating text-warning me-3">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="text-muted">4.0/5.0</span>
+                            </div>
+
+                            <!-- Added Date -->
+                            <p class="text-muted mb-0">
+                                <i class="far fa-calendar-plus me-2"></i>
+                                <span th:text="#{detail.added.on}">Thêm vào thư viện ngày</span>
+                                <strong th:text="${#temporals.format(book.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</strong>
+                            </p>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4" th:if="${book.description and !#strings.isEmpty(book.description)}">
+                            <h5 class="fw-bold mb-3">
+                                <i class="fas fa-align-left me-2"></i>
+                                <span th:text="#{detail.description}">Mô tả</span>
+                            </h5>
+                            <div class="description-content">
+                                <p class="text-muted lh-lg" th:text="${book.description}">Book description goes here...</p>
+                            </div>
+                        </div>
+
+                        <!-- Book Information Grid -->
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <div class="info-card p-3 bg-light rounded">
+                                    <div class="d-flex align-items-center">
+                                        <div class="info-icon me-3">
+                                            <i class="fas fa-bookmark fa-2x text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold" th:text="#{detail.genre}">Thể loại</h6>
+                                            <p class="mb-0 text-muted" th:text="${book.genre.displayName}">Fiction</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="info-card p-3 bg-light rounded">
+                                    <div class="d-flex align-items-center">
+                                        <div class="info-icon me-3">
+                                            <i class="fas fa-money-bill-wave fa-2x text-success"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold" th:text="#{detail.price}">Giá tiền</h6>
+                                            <p class="mb-0 text-muted" th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="info-card p-3 bg-light rounded">
+                                    <div class="d-flex align-items-center">
+                                        <div class="info-icon me-3">
+                                            <i class="fas fa-user-edit fa-2x text-info"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold" th:text="#{detail.author}">Tác giả</h6>
+                                            <p class="mb-0 text-muted" th:text="${book.author}">Author Name</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="info-card p-3 bg-light rounded">
+                                    <div class="d-flex align-items-center">
+                                        <div class="info-icon me-3">
+                                            <i class="fas fa-clock fa-2x text-warning"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold" th:text="#{detail.added.date}">Ngày thêm</h6>
+                                            <p class="mb-0 text-muted" th:text="${#temporals.format(book.createdAt, 'dd/MM/yyyy')}">01/01/2024</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Actions -->
+                        <div class="mt-4 pt-4 border-top">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-share-alt me-2"></i>
+                                <span th:text="#{detail.share}">Chia sẻ</span>
+                            </h6>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary btn-sm">
+                                    <i class="fab fa-facebook-f me-1"></i>Facebook
+                                </button>
+                                <button class="btn btn-outline-info btn-sm">
+                                    <i class="fab fa-twitter me-1"></i>Twitter
+                                </button>
+                                <button class="btn btn-outline-success btn-sm">
+                                    <i class="fab fa-whatsapp me-1"></i>WhatsApp
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="copyToClipboard()">
+                                    <i class="fas fa-link me-1"></i>
+                                    <span th:text="#{detail.copy.link}">Sao chép liên kết</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title text-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span th:text="#{modal.delete.title}">Xác nhận xóa</span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <div class="mb-3">
+                            <i class="fas fa-trash-alt fa-4x text-danger mb-3"></i>
+                        </div>
+                        <p class="mb-2" th:text="#{modal.delete.message}">Bạn có chắc chắn muốn xóa sách:</p>
+                        <h6 class="fw-bold text-primary" th:text="${book.title}">Book Title</h6>
+                        <p class="text-muted small mt-3" th:text="#{modal.delete.warning}">
+                            Hành động này không thể hoàn tác!
+                        </p>
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>
+                            <span th:text="#{button.cancel}">Hủy</span>
+                        </button>
+                        <form method="post" th:action="@{/books/delete/{id}(id=${book.id})}" class="d-inline">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash me-1"></i>
+                                <span th:text="#{button.delete}">Xóa</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="css">
+        <style>
+            .bg-gradient-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+
+            .book-detail-cover {
+                height: 400px;
+                width: 100%;
+                object-fit: cover;
+            }
+
+            .info-card {
+                transition: all 0.3s ease;
+                border: 1px solid transparent;
+            }
+
+            .info-card:hover {
+                background-color: #fff !important;
+                border-color: #dee2e6;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                transform: translateY(-2px);
+            }
+
+            .info-icon {
+                opacity: 0.8;
+            }
+
+            .description-content {
+                max-height: 200px;
+                overflow-y: auto;
+            }
+
+            .rating i {
+                font-size: 1.2rem;
+            }
+        </style>
+    </th:block>
+
+    <th:block layout:fragment="javascript">
+        <script>
+            function copyToClipboard() {
+                navigator.clipboard.writeText(window.location.href).then(function() {
+                    // Show toast notification
+                    const toast = document.createElement('div');
+                    toast.className = 'toast align-items-center text-white bg-success border-0 position-fixed top-0 start-50 translate-middle-x mt-3';
+                    toast.setAttribute('role', 'alert');
+                    toast.style.zIndex = '9999';
+                    toast.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-check me-2"></i>Đã sao chép liên kết!
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                `;
+
+                    document.body.appendChild(toast);
+                    const bsToast = new bootstrap.Toast(toast);
+                    bsToast.show();
+
+                    toast.addEventListener('hidden.bs.toast', () => {
+                        toast.remove();
+                    });
+                });
+            }
+        </script>
+    </th:block>
+</html>

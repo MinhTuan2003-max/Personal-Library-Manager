@@ -1,0 +1,102 @@
+<footer th:fragment="footer" class="bg-dark text-light py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <!-- Brand Section -->
+            <div class="col-lg-4 mb-4">
+                <div class="d-flex align-items-center mb-3">
+                    <img th:src="@{/images/logo.png}" alt="Logo" width="50" height="50" class="me-3 rounded">
+                    <h5 class="mb-0 fw-bold">BookShelf</h5>
+                </div>
+                <p class="text-muted" th:text="#{footer.description}">
+                    Quản lý thư viện sách cá nhân thông minh với tính năng theo dõi chi tiêu.
+                </p>
+                <div class="social-links">
+                    <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-light me-3"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-light"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-lg-2 col-md-6 mb-4">
+                <h6 class="fw-bold mb-3" th:text="#{footer.quick.links}">Liên kết nhanh</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#" th:href="@{/}" class="text-muted text-decoration-none">
+                        <i class="fas fa-home me-2"></i><span th:text="#{nav.home}">Trang chủ</span>
+                    </a></li>
+                    <li class="mb-2"><a href="#" th:href="@{/books/add}" class="text-muted text-decoration-none">
+                        <i class="fas fa-plus me-2"></i><span th:text="#{nav.add.book}">Thêm sách</span>
+                    </a></li>
+                    <li class="mb-2"><a href="#" th:href="@{/user/profile}" class="text-muted text-decoration-none">
+                        <i class="fas fa-user me-2"></i><span th:text="#{nav.profile}">Hồ sơ</span>
+                    </a></li>
+                </ul>
+            </div>
+
+            <!-- Support -->
+            <div class="col-lg-2 col-md-6 mb-4">
+                <h6 class="fw-bold mb-3" th:text="#{footer.support}">Hỗ trợ</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">
+                        <i class="fas fa-question-circle me-2"></i><span th:text="#{footer.help}">Trợ giúp</span>
+                    </a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">
+                        <i class="fas fa-envelope me-2"></i><span th:text="#{footer.contact}">Liên hệ</span>
+                    </a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">
+                        <i class="fas fa-shield-alt me-2"></i><span th:text="#{footer.privacy}">Bảo mật</span>
+                    </a></li>
+                </ul>
+            </div>
+
+            <!-- Statistics -->
+            <div class="col-lg-4 mb-4" th:if="${user}">
+                <h6 class="fw-bold mb-3" th:text="#{footer.statistics}">Thống kê</h6>
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="bg-primary rounded p-3">
+                            <i class="fas fa-book fa-2x mb-2"></i>
+                            <h6 th:text="${totalBooks} ?: '0'">0</h6>
+                            <small th:text="#{footer.total.books}">Tổng sách</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="bg-success rounded p-3">
+                            <i class="fas fa-wallet fa-2x mb-2"></i>
+                            <h6 th:text="${#numbers.formatDecimal(user.budget, 0, 'COMMA', 0, 'POINT')}">0</h6>
+                            <small th:text="#{footer.budget}">Ngân sách</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="bg-info rounded p-3">
+                            <i class="fas fa-chart-line fa-2x mb-2"></i>
+                            <h6 th:text="${#numbers.formatDecimal(user.totalSpent, 0, 'COMMA', 0, 'POINT')}">0</h6>
+                            <small th:text="#{footer.spent}">Đã chi</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- Copyright -->
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <p class="mb-0 text-muted">
+                    &copy; <span th:text="${#dates.year(#dates.createNow())}">2024</span> BookShelf.
+                    <span th:text="#{footer.rights}">All rights reserved.</span>
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <small class="text-muted">
+                    <span th:text="#{footer.version}">Version</span> 1.0.0 |
+                    <span th:text="#{footer.built.with}">Built with</span>
+                    <i class="fas fa-heart text-danger"></i>
+                    <span th:text="#{footer.by}">by</span> Spring Boot
+                </small>
+            </div>
+        </div>
+    </div>
+</footer>

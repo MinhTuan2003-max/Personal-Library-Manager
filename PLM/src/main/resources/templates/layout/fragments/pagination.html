@@ -1,0 +1,79 @@
+<nav th:fragment="pagination(page)" th:if="${page.totalPages > 1}" class="mt-4">
+    <ul class="pagination justify-content-center pagination-custom">
+        <!-- First Page -->
+        <li class="page-item" th:if="${page.number > 1}">
+            <a class="page-link" th:href="@{''(page=0) + ${#httpServletRequest.queryString != null ? '&' + #httpServletRequest.queryString.replaceAll('page=[^&]*&?', '').replaceAll('&$', '') : ''}}">
+                <i class="fas fa-angle-double-left"></i>
+            </a>
+        </li>
+
+        <!-- Previous Page -->
+        <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+            <a class="page-link" th:href="@{''(page=${page.number - 1}) + ${#httpServletRequest.queryString != null ? '&' + #httpServletRequest.queryString.replaceAll('page=[^&]*&?', '').replaceAll('&$', '') : ''}}">
+                <i class="fas fa-chevron-left"></i>
+                <span class="d-none d-sm-inline ms-1" th:text="#{pagination.previous}">Trước</span>
+            </a>
+        </li>
+
+        <!-- Page Numbers -->
+        <th:block th:with="startPage=${page.number > 2 ? page.number - 2 : 0},
+                           endPage=${page.number + 2 < page.totalPages - 1 ? page.number + 2 : page.totalPages - 1}">
+
+            <!-- First page with ellipsis -->
+            <li class="page-item" th:if="${startPage > 0}">
+                <a class="page-link" th:href="@{''(page=0) + ${#httpServletRequest.queryString != null ? '&' + #httpServletRequest.queryString.replaceAll('page=[^&]*&?', '').replaceAll('&$', '') : ''}}">1</a>
+            </li>
+            <li class="page-item disabled" th:if="${startPage > 1}">
+                <span class="page-link">...</span>
+            </li>
+
+            <!-- Page range -->
+            <li th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                class="page-item" th:classappend="${i == page.number} ? 'active'">
+                <a class="page-link"
+                   th:href="@{''(page=${i}) + ${#httpServletRequest.queryString != null ? '&' + #httpServletRequest.queryString.replaceAll('page=[^&]*&?', '').replaceAll('&$', '') : ''}}"
+                   th:text="${i + 1}">1</a>
+            </li>
+
+            <!-- Last page with ellipsis -->
+            <li class="page-item disabled" th:if="${endPage < page.totalPages - 2}">
+                <span class="page-link">...</span>
+            </li>
+            <li class="page-item" th:if="${endPage < page.totalPages - 1}">
+                <a class="page-link" th:href="@{''(page=${page.totalPages - 1}) + ${#httpServletRequest.queryString != null ? '&' + #httpServletRequest.queryString.replaceAll('page=[^&]*&?', '').replaceAll('&$', '') : ''}}"
+                   th:text="${page.totalPages}">Last</a>
+            </li>
+        </th:block>
+
+        <!-- Next Page -->
+        <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+            <a class="page-link" th:href="@{''(page=${page.number + 1}) + ${#httpServletRequest.queryString != null ? '&' + #httpServletRequest.queryString.replaceAll('page=[^&]*&?', '').replaceAll('&$', '') : ''}}">
+                <span class="d-none d-sm-inline me-1" th:text="#{pagination.next}">Sau</span>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </li>
+
+        <!-- Last Page -->
+        <li class="page-item" th:if="${page.number < page.totalPages - 2}">
+            <a class="page-link" th:href="@{''(page=${page.totalPages - 1}) + ${#httpServletRequest.queryString != null ? '&' + #httpServletRequest.queryString.replaceAll('page=[^&]*&?', '').replaceAll('&$', '') : ''}}">
+                <i class="fas fa-angle-double-right"></i>
+            </a>
+        </li>
+    </ul>
+
+    <!-- Page Info -->
+    <div class="text-center mt-3">
+        <small class="text-muted">
+            <span th:text="#{pagination.showing}">Hiển thị</span>
+            <strong th:text="${page.numberOfElements}">10</strong>
+            <span th:text="#{pagination.of}">của</span>
+            <strong th:text="${page.totalElements}">100</strong>
+            <span th:text="#{pagination.results}">kết quả</span>
+            |
+            <span th:text="#{pagination.page}">Trang</span>
+            <strong th:text="${page.number + 1}">1</strong>
+            <span th:text="#{pagination.of}">của</span>
+            <strong th:text="${page.totalPages}">10</strong>
+        </small>
+    </div>
+</nav>
